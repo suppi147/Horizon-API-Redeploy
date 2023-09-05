@@ -8,4 +8,7 @@
   `.\redeployhorizon\Scripts\activate`
 - install django
   `pip install django`
+- create horizon API project
+  `python -m django startproject HorizonAPI`
+
 
