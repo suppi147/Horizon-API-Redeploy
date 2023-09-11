@@ -10,5 +10,10 @@
   `pip install django`
 - create horizon API project
   `python -m django startproject HorizonAPI`
-
+- create app
+  `python manage.py startapp SessionManager`
+- make migration for session manager
+  `python manage.py makemigrations SessionManager`
+- migrate setting to project
+  `python manage.py migrate`
 
