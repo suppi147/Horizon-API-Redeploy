@@ -133,8 +133,6 @@ def logout(request):
     if revoke_response.status_code == 204:
         try:
             del request.session['user']
-            del request.session['X-subject-token']
-            del request.session['X_Auth_Token']
         except:
             return redirect('/SessionManager/login')
         return redirect('/SessionManager/login')
