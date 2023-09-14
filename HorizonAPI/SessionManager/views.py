@@ -157,3 +157,14 @@ def get_endpoints(request):
     pretty_json = json.dumps(parsed_data, indent=4)
 
     return HttpResponse(pretty_json,content_type='application/json')
+
+def get_instances(request):
+    url = "http://127.0.0.1:8774/v2/servers"
+    custom_header = {
+        "X-Auth-Token" : request.session['keystone']
+    }
+    response = requests.get(url, headers=custom_header)
+    parsed_data = json.loads(response.text)
+    pretty_json = json.dumps(parsed_data, indent=4)
+
+    return HttpResponse(pretty_json,content_type='application/json')

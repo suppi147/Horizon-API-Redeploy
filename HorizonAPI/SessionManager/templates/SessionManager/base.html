@@ -4,7 +4,7 @@
 	<title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-	<h1>My Site</h1>
+	<h1>Openstack dashboard</h1>
 
 	<a href="{% url 'SessionManager:home' %}">Home</a>
 	<span>/</span>
@@ -13,7 +13,8 @@
 		<a href="{% url 'SessionManager:logout' %}">Logout</a>
 		<hr>
 		<h2>Welcome <span style="color: dodgerblue;">{{current_user}}</span>!</h2>
-		<a class="button-link" href="{% url 'SessionManager:get_endpoints' %}" target="_blank">Open Link</a>
+		<a class="button-link" href="{% url 'SessionManager:get_endpoints' %}">Get endpoints</a><br>
+		<a class="button-link" href="{% url 'SessionManager:get_instances' %}">Get instances</a>
 	{% else %}
 		<a href="{% url 'SessionManager:login' %}">Login</a>
 		<span>/</span>
