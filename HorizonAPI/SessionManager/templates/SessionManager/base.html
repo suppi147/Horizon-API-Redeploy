@@ -13,6 +13,7 @@
 		<a href="{% url 'SessionManager:logout' %}">Logout</a>
 		<hr>
 		<h2>Welcome <span style="color: dodgerblue;">{{current_user}}</span>!</h2>
+		<a class="button-link" href="{% url 'SessionManager:get_endpoints' %}" target="_blank">Open Link</a>
 	{% else %}
 		<a href="{% url 'SessionManager:login' %}">Login</a>
 		<span>/</span>

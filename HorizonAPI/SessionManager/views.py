@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import requests
 from .models import User
+import json
 
 
 # Create your views here.
@@ -31,7 +32,7 @@ def signup(request):
         return render(request, 'SessionManager/signup.html')
 
 
-def checkLoginKeystone(uname,pwd):
+def checkLoginKeystone(uname,pwd,request):
     url = "http://127.0.0.1:5000/v3/auth/tokens"
     payload_getID = {
         "auth": {
@@ -58,6 +59,17 @@ def checkLoginKeystone(uname,pwd):
         # For example, if the token is in the response body as JSON, you can access it like this:
         user_id = response_getID.json().get("token", {}).get("user", {}).get("id")
         print(f"user id: {user_id}")
+
+        X_Auth_Token= response_getID.headers.get('X-Subject-Token')
+        print(f"X-Auth-Token login: {X_Auth_Token}")
+        get_project_header = {
+            "X-Auth-Token" : X_Auth_Token
+        }
+        response_projectID = requests.get("http://127.0.0.1:5000/v3/auth/projects", headers=get_project_header)
+        parsed_data = json.loads(response_projectID.text)
+        project_id = parsed_data["projects"][0]["id"]
+        print(f"project id: {project_id}")
+
         payload_getToken = {    
         "auth": {
             "identity": {
@@ -73,17 +85,17 @@ def checkLoginKeystone(uname,pwd):
             },
                 "scope": {
                 "project": {
-                    "id": "ad4728f8d4f64678b37319afba7fb85c"
+                    "id": project_id
                 }
             }
         }
     }
-        response_getToken= requests.post(url, json=payload_getToken)
+        response_getToken = requests.post(url, json=payload_getToken)
         if response_getToken.status_code == 201:
             print("Token successfully retreived!")
-            headers_getToken = response_getToken.headers
-            X_subject_token= headers_getToken.get('X-Subject-Token')
-            print(f"X-subject-token: {X_subject_token}")
+            X_subject_token = response_getToken.headers.get('X-Subject-Token')
+            print(f"X-subject-token project: {X_subject_token}")
+            request.session['keystone'] = X_subject_token
             return True
         else:
             # Handle authentication failure or other errors
@@ -102,9 +114,9 @@ def login(request):
         pwd = request.POST.get('pwd')
         
         check_user = User.objects.filter(username=uname, password=pwd)
-        if check_user and checkLoginKeystone(uname,pwd):
+        if check_user and checkLoginKeystone(uname,pwd,request):
             request.session['user'] = uname
-            #return redirect('/SessionManager/home')
+            return redirect('/SessionManager/home')
         else:
             return HttpResponse('Please enter valid Username or Password.')
 
@@ -134,3 +146,14 @@ def get_session_info(request):
         response += f'{key}: {value}<br>'
 
     return HttpResponse(response)
+
+def get_endpoints(request):
+    url = "http://127.0.0.1:5000/v3/auth/catalog"
+    custom_header = {
+        "X-Auth-Token" : request.session['keystone']
+    }
+    response = requests.get(url, headers=custom_header)
+    parsed_data = json.loads(response.text)
+    pretty_json = json.dumps(parsed_data, indent=4)
+
+    return HttpResponse(pretty_json,content_type='application/json')
