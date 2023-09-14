@@ -51,3 +51,20 @@ def logout(request):
     except:
         return redirect('/SessionManager/login')
     return redirect('/SessionManager/login')
+
+def get_session_info(request):
+    # Lấy session ID
+    session_id = request.session.session_key
+    # Lấy dữ liệu của session
+    request.session['keystone'] = 'gAAAAABk7vPV1DIm86IOsex2HFvyfbuvX13PIdxrOPgYWr8GneWtZOTQDpNPqch6hchYBz1bzE2ewW9ZENPq8V0yQSmd2ZoEuDjrfCXb7XkHLusxat52s4jyeJTK21dVFDZebsXuwrFEdVYh936lQA_I--tilPUa4kJ7rkCnmSro9y3HEsnCrGM'
+    x=request.session['keystone']
+    session_data = request.session
+    # Hiển thị thông tin session
+    response = f'Session ID: {session_id}<br>'
+    response += f'Session Data:{session_data}<br>'
+    response += f'Session Openstack:{x}<br>'
+    # Lặp qua dữ liệu của session và hiển thị từng cặp key-value
+    for key, value in session_data.items():
+        response += f'{key}: {value}<br>'
+
+    return HttpResponse(response)

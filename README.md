@@ -16,4 +16,8 @@
   `python manage.py makemigrations SessionManager`
 - migrate setting to project
   `python manage.py migrate`
-
+## Login with Openstack API
+- key-value store api key tested
+![](https://hackmd.io/_uploads/S1gqnee1T.png)
+- login UML
+![](https://hackmd.io/_uploads/SkIypglk6.png)
