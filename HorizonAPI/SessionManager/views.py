@@ -60,10 +60,10 @@ def checkLoginKeystone(uname,pwd,request):
         user_id = response_getID.json().get("token", {}).get("user", {}).get("id")
         print(f"user id: {user_id}")
 
-        X_Auth_Token= response_getID.headers.get('X-Subject-Token')
-        print(f"X-Auth-Token login: {X_Auth_Token}")
+        request.session['X_Auth_Token']= response_getID.headers.get('X-Subject-Token')
+        print(f"X-Auth-Token login: {request.session['X_Auth_Token']}")
         get_project_header = {
-            "X-Auth-Token" : X_Auth_Token
+            "X-Auth-Token" : request.session['X_Auth_Token']
         }
         response_projectID = requests.get("http://127.0.0.1:5000/v3/auth/projects", headers=get_project_header)
         parsed_data = json.loads(response_projectID.text)
@@ -95,7 +95,7 @@ def checkLoginKeystone(uname,pwd,request):
             print("Token successfully retreived!")
             X_subject_token = response_getToken.headers.get('X-Subject-Token')
             print(f"X-subject-token project: {X_subject_token}")
-            request.session['keystone'] = X_subject_token
+            request.session['X-subject-token'] = X_subject_token
             return True
         else:
             # Handle authentication failure or other errors
@@ -116,6 +116,7 @@ def login(request):
         check_user = User.objects.filter(username=uname, password=pwd)
         if check_user and checkLoginKeystone(uname,pwd,request):
             request.session['user'] = uname
+            print("Revoke successfully!")
             return redirect('/SessionManager/home')
         else:
             return HttpResponse('Please enter valid Username or Password.')
@@ -124,11 +125,23 @@ def login(request):
 
 
 def logout(request):
-    try:
-        del request.session['user']
-    except:
+    revoke_header = {
+            "X-Auth-Token" : request.session['X_Auth_Token'],
+            "X-Subject-Token" : request.session['X-subject-token']
+        }
+    revoke_response= requests.delete("http://127.0.0.1:5000/v3/auth/tokens",headers=revoke_header)
+    if revoke_response.status_code == 204:
+        try:
+            del request.session['user']
+            del request.session['X-subject-token']
+            del request.session['X_Auth_Token']
+        except:
+            return redirect('/SessionManager/login')
         return redirect('/SessionManager/login')
-    return redirect('/SessionManager/login')
+    else:
+        print(f"Authentication failed. Status code: {revoke_response.status_code}")
+        print(f"Response content: {revoke_response.text}")
+        return redirect('/SessionManager/login')
 
 def get_session_info(request):
     # Lấy session ID
@@ -150,7 +163,7 @@ def get_session_info(request):
 def get_endpoints(request):
     url = "http://127.0.0.1:5000/v3/auth/catalog"
     custom_header = {
-        "X-Auth-Token" : request.session['keystone']
+        "X-Auth-Token" : request.session['X-subject-token']
     }
     response = requests.get(url, headers=custom_header)
     parsed_data = json.loads(response.text)
@@ -161,7 +174,7 @@ def get_endpoints(request):
 def get_instances(request):
     url = "http://127.0.0.1:8774/v2/servers"
     custom_header = {
-        "X-Auth-Token" : request.session['keystone']
+        "X-Auth-Token" : request.session['X-subject-token']
     }
     response = requests.get(url, headers=custom_header)
     parsed_data = json.loads(response.text)
