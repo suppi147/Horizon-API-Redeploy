@@ -28,4 +28,3 @@
 ![](https://hackmd.io/_uploads/Bk2VY4g1T.png)
 - get server lists
 ![](https://hackmd.io/_uploads/BJcvtVgya.png)
-
