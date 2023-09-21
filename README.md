@@ -18,13 +18,13 @@
   `python manage.py migrate`
 ## Login with Openstack API
 - key-value store api key tested
-![](https://hackmd.io/_uploads/S1gqnee1T.png)
+![Alt text](/images/S1gqnee1T.png)
 - login UML
-![](https://hackmd.io/_uploads/Syz5tEg1a.png)
+![Alt text](/images/Syz5tEg1a.png)
 ## Result
 - getting login and authentication by openstack API
-![](https://hackmd.io/_uploads/BJsxt4eya.png)
+![Alt text](/images/BJsxt4eya.png)
 - getting endpoints
-![](https://hackmd.io/_uploads/Bk2VY4g1T.png)
+![Alt text](/images/Bk2VY4g1T.png)
 - get server lists
-![](https://hackmd.io/_uploads/BJcvtVgya.png)
+![Alt text](/images/BJcvtVgya.png)
