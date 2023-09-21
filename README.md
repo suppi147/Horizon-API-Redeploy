@@ -28,3 +28,6 @@
 ![Alt text](/images/Bk2VY4g1T.png)
 - get server lists
 ![Alt text](/images/BJcvtVgya.png)
+## Move to docker
+- ![Alt text](/images/imaged.png)
+- docker pull suppi147/horizon:latest
